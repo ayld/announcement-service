@@ -1,19 +1,3 @@
-/*
- * Copyright 2012-2017 the original author or authors.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.tide;
 
 import com.google.gson.Gson;
@@ -22,12 +6,14 @@ import com.tide.dao.AnnouncementDao;
 import com.tide.dto.AnnouncementDto;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -39,16 +25,15 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @TestPropertySource(properties = { "spring.jmx.enabled:true", "spring.datasource.jmx-enabled:true" })
 @ActiveProfiles("scratch")
+@FixMethodOrder
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AnnouncementsTests {
 
 	@Autowired
@@ -67,7 +52,6 @@ public class AnnouncementsTests {
 
 	@Test
 	public void create() throws Exception {
-
 		final String testAnnouncementTopic = "testTopic";
 		final String testAnnouncementText = "Test announcement.";
 
@@ -163,13 +147,13 @@ public class AnnouncementsTests {
 				.andExpect(status().isOk())
 				.andReturn().getResponse();
 
-		AnnouncementDto createdDto = new Gson().fromJson(getResponse.getContentAsString(), AnnouncementDto.class);
-		Assert.assertNotNull(createdDto);
-		Assert.assertEquals(Long.valueOf(1), createdDto.getId());
-		Assert.assertEquals(Long.valueOf(0), createdDto.getLikes());
-		Assert.assertEquals(Long.valueOf(0), createdDto.getDislikes());
-		Assert.assertEquals(testAnnouncementTopic, createdDto.getTopic());
-		Assert.assertEquals(testAnnouncementText, createdDto.getText());
+		AnnouncementDto created = new Gson().fromJson(getResponse.getContentAsString(), AnnouncementDto.class);
+		Assert.assertNotNull(created);
+		Assert.assertEquals(Long.valueOf(1), created.getId());
+		Assert.assertEquals(Long.valueOf(0), created.getLikes());
+		Assert.assertEquals(Long.valueOf(0), created.getDislikes());
+		Assert.assertEquals(testAnnouncementTopic, created.getTopic());
+		Assert.assertEquals(testAnnouncementText, created.getText());
 
 		// like new announcement
 		this.mvc.perform(post("/announcements/1/like")).andExpect(status().isOk());
@@ -183,13 +167,13 @@ public class AnnouncementsTests {
 				.andExpect(status().isOk())
 				.andReturn().getResponse();
 
-		createdDto = new Gson().fromJson(getResponse.getContentAsString(), AnnouncementDto.class);
-		Assert.assertNotNull(createdDto);
-		Assert.assertEquals(Long.valueOf(1), createdDto.getId());
-		Assert.assertEquals(Long.valueOf(1), createdDto.getLikes());
-		Assert.assertEquals(Long.valueOf(2), createdDto.getDislikes());
-		Assert.assertEquals(testAnnouncementTopic, createdDto.getTopic());
-		Assert.assertEquals(testAnnouncementText, createdDto.getText());
+		created = new Gson().fromJson(getResponse.getContentAsString(), AnnouncementDto.class);
+		Assert.assertNotNull(created);
+		Assert.assertEquals(Long.valueOf(1), created.getId());
+		Assert.assertEquals(Long.valueOf(1), created.getLikes());
+		Assert.assertEquals(Long.valueOf(2), created.getDislikes());
+		Assert.assertEquals(testAnnouncementTopic, created.getTopic());
+		Assert.assertEquals(testAnnouncementText, created.getText());
 
 	}
 }
