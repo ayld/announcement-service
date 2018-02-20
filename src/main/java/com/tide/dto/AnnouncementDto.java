@@ -9,8 +9,8 @@ public class AnnouncementDto {
     private Long id = NOT_YET_PERSISTED_ID;
     private String topic;
     private String text;
-    private Long likes;
-    private Long dislikes;
+    private Long likes = 0l;
+    private Long dislikes = 0l;
 
     public AnnouncementDto() {
     }

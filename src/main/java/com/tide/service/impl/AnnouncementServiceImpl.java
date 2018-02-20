@@ -34,7 +34,6 @@ public class AnnouncementServiceImpl implements AnnouncementService {
         Assert.notNull(id, "can't find announcement with null id");
 
         final Optional<Announcement> announcement = announcementDao.findById(id);
-        System.out.println("announcement: " + announcement.get());
         return announcementAssembler.toDto(announcement.orElse(EMPTY_ANNOUNCMENT));
     }
 

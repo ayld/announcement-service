@@ -24,4 +24,6 @@ public interface AnnouncementDao extends Repository<Announcement, Long> {
     @Modifying
     @Query("update Announcement a set a.dislikesCount = a.dislikesCount + 1 where a.id = :id")
     void incrementDislikes(@Param("id") Long id);
+
+    void deleteAll();
 }
